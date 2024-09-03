@@ -1,23 +1,18 @@
 import { Router } from 'express';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import handlebars from 'express-handlebars';
+import ProductManager from '../services/ProductManager.js'; // Ajusta la ruta
 
 const router = Router();
+const productsManager = new ProductManager();
 
-// Configuración de Handlebars
-router.engine('handlebars', handlebars.engine());
-router.set('view engine', 'handlebars');
-router.set('views', path.join(path.dirname(fileURLToPath(import.meta.url)), '..', 'views'));
-
-// Ruta para la vista principal
-router.get('/', (req, res) => {
-    res.render('home'); // Asegúrate de tener un archivo home.handlebars en la carpeta views
+// Ruta para renderizar la vista de inicio
+router.get('/', async (req, res) => {
+    const products = await productsManager.getAllProducts();
+    res.render('home', { products });
 });
 
-// Ruta para realTimeProducts
+// Ruta para la vista de productos en tiempo real
 router.get('/realtimeproducts', (req, res) => {
-    res.render('realTimeProducts'); // Asegúrate de tener un archivo realTimeProducts.handlebars en la carpeta views
+    res.render('realTimeProducts');
 });
 
 export default router;
