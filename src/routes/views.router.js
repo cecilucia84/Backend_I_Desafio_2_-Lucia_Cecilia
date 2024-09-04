@@ -1,10 +1,15 @@
-import express from 'express';
+import { Router } from 'express';
 
-const router = express.Router();
+const router = Router();
 
-// Renderiza la vista 'index.handlebars'
+// Ruta para la vista principal (index)
 router.get('/', (req, res) => {
-    res.render('index');
+  res.render('index');
+});
+
+// Ruta para la vista de productos en tiempo real (realtimeproducts)
+router.get('/realtimeproducts', (req, res) => {
+  res.render('realtimeproducts');  // Asegúrate de tener un archivo 'realtimeproducts.handlebars'
 });
 
 export default router;

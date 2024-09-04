@@ -22,7 +22,7 @@ app.set('view engine', 'handlebars');
 app.set('views', path.join(__dirname, 'src', 'views'));
 
 // Configura middleware para servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'src', 'public')));
 
 // Importa las rutas
 import viewsRouter from './src/routes/views.router.js';
@@ -40,5 +40,8 @@ server.listen(PORT, () => {
 io.on('connection', (socket) => {
   console.log('Cliente conectado');
 
-  // Maneja eventos de WebSocket aquí
+  // Lógica para manejar eventos de WebSocket aquí
+  socket.on('nuevoProducto', (producto) => {
+    io.emit('productoActualizado', producto);
+  });
 });
