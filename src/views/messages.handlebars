@@ -1,18 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/js/messages.js" defer></script>
-</head>
-<body>
-    <h1>Chat</h1>
-    <div id="chat">
-        <input type="text" id="message" placeholder="Escribe un mensaje">
-        <button id="sendMessage">Enviar</button>
-        <div id="messages"></div>
+<div>
+    <h1>Bienvenido al chat de la camada</h1>
+    <h2>Nombre: <span id="myName"> </span></h2>
+    <div>
+        <p>
+            <input id="chatBox" type="text" alt="Introduce un mensaje">
+        </p>
+        <button id="closeChatBox">Cerrar Chat</button>
     </div>
-</body>
-</html>
+    <div>
+        <p id="messageLogs"></p>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/messages.js"></script>

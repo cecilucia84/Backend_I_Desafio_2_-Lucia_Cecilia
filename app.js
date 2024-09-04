@@ -1,57 +1,65 @@
 import express from 'express';
-import { Server as HttpServer } from 'http';
-import { Server as SocketIO } from 'socket.io';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import messagesRouter from './src/routes/messages.router.js';
+import handlebars from 'express-handlebars';
+import __dirname from './src/utils/utils.js';
+import { Server } from 'socket.io';
+import viewRouter from './src/routes/views.router.js';
+import productsRouter from './src/routes/products.router.js';
+import cartsRouter from './src/routes/carts.router.js';
 
-// Configurar el directorio actual
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Crear la aplicación Express
 const app = express();
-const httpServer = HttpServer(app);
-const io = new SocketIO(httpServer);
+const PORT = process.env.PORT || 9090;
 
-// Configurar Handlebars
-app.set('view engine', 'handlebars');
-app.set('views', path.join(__dirname, 'src/views'));
+// Configuración para recibir objetos JSON
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Servir archivos estáticos
-app.use(express.static(path.join(__dirname, 'public')));
+// Configuración de Handlebars
+app.engine('handlebars', handlebars.engine());
+app.set('views', __dirname + '/views');
+app.set("view engine", "handlebars");
 
-// Configurar el enrutador para las rutas de mensajes
-app.use('/api/messages', messagesRouter);
+// Archivos estáticos
+app.use(express.static(__dirname + "/public"));
 
-// Manejar las conexiones de WebSocket
-io.on('connection', (socket) => {
-  console.log('Nuevo cliente conectado');
+// Rutas
+app.use('/', viewRouter);
+app.use('/api/products', productsRouter);
+app.use('/api/carts', cartsRouter);
 
-  socket.on('userConnected', (user) => {
-    console.log(`Usuario conectado: ${user}`);
-    socket.broadcast.emit('userConnected', user);
-  });
-
-  socket.on('message', (data) => {
-    console.log(`Mensaje recibido: ${data.message} de ${data.user}`);
-    io.emit('messageLogs', [data]); // Enviar el mensaje a todos los clientes
-  });
-
-  socket.on('closeChat', () => {
-    console.log('Chat cerrado');
-    io.emit('chatClosed'); // Notificar a todos los clientes que el chat ha sido cerrado
-  });
-
-  socket.on('disconnect', () => {
-    console.log('Cliente desconectado');
-  });
+// Iniciar el servidor HTTP
+const httpServer = app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`);
 });
 
-// Iniciar el servidor
-const PORT = process.env.PORT || 8080;
-httpServer.listen(PORT, () => {
-  console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+// Configuración del servidor WebSocket
+const socketServer = new Server(httpServer);
 
-export { io }; // Exportar io para su uso en el enrutador
+const messages = [];
+const products = []; // Para almacenar productos en memoria
+
+socketServer.on('connection', socket => {
+    console.log('Cliente conectado');
+    socketServer.emit('messageLogs', messages);
+    socketServer.emit('updateProductList', products);
+
+    socket.on("message", data => {
+        messages.push(data);
+        socketServer.emit('messageLogs', messages);
+    });
+
+    socket.on('userConnected', data => {
+        console.log(`Usuario conectado: ${data.user}`);
+        socket.broadcast.emit('userConnected', data.user);
+    });
+
+    socket.on('addProduct', product => {
+        products.push(product);
+        socketServer.emit('updateProductList', products);
+    });
+
+    socket.on('closeChat', data => {
+        if (data.close === "close") {
+            socket.disconnect();
+        }
+    });
+});

@@ -1,16 +1,11 @@
-import { Router } from 'express';
-import ProductManager from '../services/ProductManager.js'; // Ajusta la ruta
+import express from 'express';
 
-const router = Router();
-const productsManager = new ProductManager();
+const router = express.Router();
 
-// Ruta para renderizar la vista de inicio
-router.get('/', async (req, res) => {
-    const products = await productsManager.getAllProducts();
-    res.render('home', { products });
+router.get('/', (req, res) => {
+    res.render('index', {});
 });
 
-// Ruta para la vista de productos en tiempo real
 router.get('/realtimeproducts', (req, res) => {
     res.render('realTimeProducts');
 });
