@@ -1,65 +1,44 @@
+// Importa los módulos necesarios
 import express from 'express';
-import handlebars from 'express-handlebars';
-import __dirname from './src/utils/utils.js';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import expressHandlebars from 'express-handlebars';
+import http from 'http';
 import { Server } from 'socket.io';
-import viewRouter from './src/routes/views.router.js';
-import productsRouter from './src/routes/products.router.js';
-import cartsRouter from './src/routes/carts.router.js';
 
+// Obtén la ruta del archivo actual
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Crea una instancia de la aplicación Express
 const app = express();
-const PORT = process.env.PORT || 9090;
+const server = http.createServer(app);
+const io = new Server(server);
 
-// Configuración para recibir objetos JSON
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Configura Handlebars
+const hbs = expressHandlebars.create();
+app.engine('handlebars', hbs.engine);
+app.set('view engine', 'handlebars');
+app.set('views', path.join(__dirname, 'src', 'views'));
 
-// Configuración de Handlebars
-app.engine('handlebars', handlebars.engine());
-app.set('views', __dirname + '/views');
-app.set("view engine", "handlebars");
+// Configura middleware para servir archivos estáticos
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Archivos estáticos
-app.use(express.static(__dirname + "/public"));
+// Importa las rutas
+import viewsRouter from './src/routes/views.router.js';
 
-// Rutas
-app.use('/', viewRouter);
-app.use('/api/products', productsRouter);
-app.use('/api/carts', cartsRouter);
+// Usa el router de vistas
+app.use('/', viewsRouter);
 
-// Iniciar el servidor HTTP
-const httpServer = app.listen(PORT, () => {
-    console.log(`Server running on port: ${PORT}`);
+// Configura el puerto y arranca el servidor
+const PORT = 3000;
+server.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
-// Configuración del servidor WebSocket
-const socketServer = new Server(httpServer);
+// Maneja las conexiones de WebSocket
+io.on('connection', (socket) => {
+  console.log('Cliente conectado');
 
-const messages = [];
-const products = []; // Para almacenar productos en memoria
-
-socketServer.on('connection', socket => {
-    console.log('Cliente conectado');
-    socketServer.emit('messageLogs', messages);
-    socketServer.emit('updateProductList', products);
-
-    socket.on("message", data => {
-        messages.push(data);
-        socketServer.emit('messageLogs', messages);
-    });
-
-    socket.on('userConnected', data => {
-        console.log(`Usuario conectado: ${data.user}`);
-        socket.broadcast.emit('userConnected', data.user);
-    });
-
-    socket.on('addProduct', product => {
-        products.push(product);
-        socketServer.emit('updateProductList', products);
-    });
-
-    socket.on('closeChat', data => {
-        if (data.close === "close") {
-            socket.disconnect();
-        }
-    });
+  // Maneja eventos de WebSocket aquí
 });
