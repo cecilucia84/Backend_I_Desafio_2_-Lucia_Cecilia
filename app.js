@@ -4,7 +4,7 @@ import { fileURLToPath } from "url";
 import expressHandlebars from "express-handlebars";
 import http from "http";
 import { Server } from "socket.io";
-import ProductManager from "./src/services/ProductManager.js"; // Importa el ProductManager
+import ProductManager from "./src/services/ProductManager.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

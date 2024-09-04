@@ -1,15 +1,12 @@
 const socket = io();
 
-socket.emit('mensaje', "Hola soy el cliente!!");
+socket.on("updateProductList", (products) => {
+  const productList = document.getElementById("product-list");
+  productList.innerHTML = ""; // Limpiar la lista actual
 
-socket.on("msg_02", data => {
-    console.log(data);
-});
-
-socket.on("broadcast", data => {
-    console.log(data);
-});
-
-socket.on("msg_todos", data => {
-    console.log(data);
+  products.forEach((product) => {
+    const li = document.createElement("li");
+    li.textContent = `${product.title} - ${product.price}`;
+    productList.appendChild(li); // Añadir cada producto a la lista
+  });
 });

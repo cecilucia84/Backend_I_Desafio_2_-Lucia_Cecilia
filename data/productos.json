@@ -49,5 +49,17 @@
     "title": "torta princesas",
     "price": "7500",
     "status": true
+  },
+  {
+    "id": 6,
+    "title": "desayuno premium",
+    "price": "6500",
+    "status": true
+  },
+  {
+    "id": 7,
+    "title": "desayuno infantil",
+    "price": "6000",
+    "status": true
   }
 ]

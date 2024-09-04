@@ -1,5 +1,18 @@
-<div>
-    <h1>Bienvenidos a Tres Tartas!!</h1>
-</div>
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/index.js"></script>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio - Tres Tartas</title>
+  </head>
+  <body>
+    <div>
+      <h1>Bienvenidos a Tres Tartas!!</h1>
+      <h2>Productos Disponibles</h2>
+      <ul id="productList">
+        {{#each products}}
+          <li>{{this.title}} - {{this.price}}</li>
+        {{/each}}
+      </ul>
+    </div>
+  </body>
+</html>

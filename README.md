@@ -1,8 +1,14 @@
-## Para probar las rutas, puedes usar Postman:
+# PROCESO DE TESTING
 
-- GET /api/products: Listar todos los productos.
-- GET /api/products?limit=2: Listar los productos limitados por el parámetro limit.
-- GET /api/products/:pid: Obtener un producto por su ID.
-- POST /api/products: Crear un nuevo producto.
-- PUT /api/products/:pid: Actualizar un producto por su ID.
-- DELETE /api/products/:pid: Eliminar un producto por su ID.
+Websockets
+
+Se instalará y correrá el servidor en el puerto indicado.
+El servidor debe levantarse sin problema.
+Se abrirá la ruta raíz
+Debe visualizarse el contenido de la vista index.handlebars
+No se debe activar el websocket aún.
+Se buscará en la url del navegador la ruta “/realtimeproducts”.
+Se corroborará que el servidor haya conectado con el cliente, en la consola del servidor deberá mostrarse un mensaje de “cliente conectado”.
+Se debe mostrar la lista de productos y se corroborará que se esté enviando desde websocket.
+
+
